@@ -21,7 +21,7 @@ def resource_path(relative_path):
 def calcular():
     """
     Realiza o cálculo dos valores trigonométricos (seno, cosseno e tangente) do ângulo fornecido
-    e atualiza as labels com os resultados.
+    e atualiza os labels com os resultados.
     """
     try:
         angulo = float(entrada_angulo.get())  # Obtém o valor do ângulo inserido pelo usuário
@@ -32,11 +32,11 @@ def calcular():
         cosseno = math.cos(radiano)
         tangente = math.tan(radiano)
 
-        # Atualiza as labels com os resultados formatados com 3 casas decimais
+        # Atualiza os labels com os resultados formatados com 3 casas decimais
         resultado_seno.config(text=f"{seno:.3f}")
         resultado_cosseno.config(text=f"{cosseno:.3f}")
         resultado_tangente.config(text=f"{tangente:.3f}")
-    except Exception:
+    except ValueError:
         # Em caso de erro (por exemplo, entrada inválida), exibe "Erro" nas labels
         resultado_seno.config(text="Erro")
         resultado_cosseno.config(text="Erro")
@@ -56,7 +56,7 @@ def validar_entrada(texto):
     Valida a entrada do usuário permitindo apenas números e garantindo que o valor esteja entre 0 e 90.
     """
     if texto.isdigit() or texto == "":  # Permite apenas números ou campo vazio
-        if texto == "" or 0 <= int(texto) <= 90:  # Se o campo estiver vazio, permite a entrada
+        if texto == "":  # Se o campo estiver vazio, permite a entrada
             return True
         valor = int(texto)  # Converte o texto para inteiro
         return 0 <= valor <= 90  # Retorna True se o valor estiver entre 0 e 90, caso contrário False
@@ -65,16 +65,15 @@ def validar_entrada(texto):
 # Configuração da janela principal
 janela = tk.Tk()  # Cria a janela principal
 janela.title("Calculadora Trigonométrica")  # Define o título da janela
-janela.geometry("480x550")  # Define o tamanho da janela
+janela.geometry("400x550")  # Define o tamanho da janela
 janela.configure(bg="#f0f0f0")  # Define a cor de fundo da janela
 
 # Carregar e definir o ícone da janela
-icone_path = resource_path("seno.png")  # Obtém o caminho da imagem do ícone
 try:
+    icone_path = resource_path("seno.png")  # Obtém o caminho da imagem do ícone
     icone = Image.open(icone_path)  # Abre a imagem do ícone
-    icone = icone.resize((64, 64), Image.LANCZOS)  # Redimensiona a imagem
-    icone_tk = ImageTk.PhotoImage(icone)  # Converte a imagem para um formato compatível com Tkinter
-    janela.iconphoto(True, icone_tk)  # Define a imagem como ícone da janela
+    icone = ImageTk.PhotoImage(icone)  # Converte a imagem para um formato compatível com Tkinter
+    janela.iconphoto(True, icone)  # Define a imagem como ícone da janela
 except FileNotFoundError:
     print("Imagem 'seno.png' não encontrada para o ícone")  # Caso o arquivo não seja encontrado, exibe uma mensagem de erro
 
@@ -82,7 +81,7 @@ except FileNotFoundError:
 try:
     imagem_path = resource_path("seno2.png")  # Obtém o caminho da imagem principal
     imagem = Image.open(imagem_path)  # Abre a imagem
-    imagem = imagem.resize((380, 280), Image.LANCZOS)  # Redimensiona a imagem
+    imagem = imagem.resize((380, 200), Image.LANCZOS)  # Redimensiona a imagem
     foto = ImageTk.PhotoImage(imagem)  # Converte a imagem para um formato compatível com Tkinter
     label_imagem = tk.Label(janela, image=foto, bg="#f0f0f0", borderwidth=0)  # Cria um label para exibir a imagem
     label_imagem.image = foto  # Mantém uma referência da imagem para evitar que o garbage collector a remova
@@ -92,56 +91,56 @@ except FileNotFoundError:
     label_imagem = tk.Label(janela, text="Imagem 'seno2.png' não encontrada", bg="#f0f0f0")
     label_imagem.pack(pady=20)
 
-# Entrada de ângulo
+# Entrada do ângulo
 frame_entrada = tk.Frame(janela, bg="#f0f0f0")  # Cria um frame para organizar a entrada
-frame_entrada.pack(pady=15)  # Posiciona o frame na janela com um espaçamento vertical
+frame_entrada.pack(pady=10)  # Posiciona o frame na janela com um espaçamento vertical
 
-label_angulo = tk.Label(frame_entrada, text="Ângulo (0 a 90):", font=('Arial', 14), bg="#f0f0f0")  # Label para o campo de entrada
-label_angulo.grid(row=0, column=0, padx=10)  # Posiciona o label com um pequeno espaçamento inferior
+label_angulo = tk.Label(frame_entrada, text="Ângulo (0 à 90):", font=('Arial', 14), bg="#f0f0f0")  # Label para o campo de entrada
+label_angulo.pack(pady=(0, 5))  # Posiciona o label com um pequeno espaçamento inferior
 
 validacao = janela.register(validar_entrada)  # Registra a função de validação para a entrada
-entrada_angulo = tk.Entry(frame_entrada, width=5, justify='center', font=('Arial', 16),
-                          bd=2, highlightthickness=2, relief='flat', bg="#f0f0f0",
-                          validate='key', validatecommand=(validacao, '%P'))  # Cria o campo de entrada do ângulo
-entrada_angulo.grid(row=0, column=1)  # Posiciona o campo de entrada
+entrada_angulo = tk.Entry(frame_entrada, width=3,justify='center', font=('Arial', 16),
+                          bd=0 , highlightthickness=0, relief='flat', bg="#f0f0f0", fg='red',
+                          validate="key", validatecommand=(validacao, "%P"))  # Cria o campo de entrada do ângulo
+entrada_angulo.pack()  # Posiciona o campo de entrada
 
-# Linha de separação
-linha = tk.Frame(frame_entrada, bg="black", height=1, width=entrada_angulo.winfo_reqwidth())  # Cria uma linha
-linha.grid(row=1, columnspan=2, pady=(5,0))  # Posiciona a linha com um pequeno espaçamento inferior
+# Linha abaixo do campo de entrada
+linha = tk.Frame(frame_entrada, bg="black", height=1, width=entrada_angulo.winfo_reqheight())  # Cria uma linha decorativo abaixo do campo de entrada
+linha.pack(pady=(0, 5))  # Posiciona a linha com um pequeno espaçamento inferior 
 
 # Botões
 frame_botoes = tk.Frame(janela, bg="#f0f0f0")  # Cria um frame para organizar os botões
-frame_botoes.pack(pady=20)  # Posiciona o frame na janela com um espaçamento vertical
+frame_botoes.pack(pady=20) # Posiciona o frame na janela com um espaçamento
 
 botao_calcular = tk.Button(frame_botoes, text="Calcular", command=calcular, font=('Arial', 12),
-                           bd=2, highlightthickness=2, relief='flat', bg="#d9d9d9")  # Botão para calcular os valores trigonométricos
-botao_calcular.pack(side=tk.LEFT, padx=10)  # Posiciona o botão à esquerda com um espaçamento horizontal
+                            bg="#d9d9d9", relief='flat',bd=0, highlightthickness=0) # Botão para calcular os valores trigonométricos
+botao_calcular.pack(side=tk.LEFT, padx=10) # Posiciona o botão à esquerda com um espaçamento horizontal
 
-botao_limpar = tk.Button(frame_botoes, text="Limpar", command=limpar, font=('Arial', 12),
-                         bd=2, highlightthickness=2, relief='flat', bg="#d9d9d9")  # Botão para limpar a entrada e os resultados
-botao_limpar.pack(side=tk.RIGHT, padx=10)  # Posiciona o botão à direita com um espaçamento horizontal
+botao_limpar = tk.Button(frame_botoes, text="Limpar", command=limpar, font=('Arial', 12), 
+                        bg="#d9d9d9", relief='flat', bd=0, highlightthickness=0) # Botão para limpar a entrada e os resultados
+botao_limpar.pack(side=tk.RIGHT, padx=10) # Posiciona o botão à direita com um espaçamento horizontal 
 
 # Resultados
-frame_resultados = tk.Frame(janela, bg="#f0f0f0")  # Cria um frame para organizar os resultados
-frame_resultados.pack(pady=10)  # Posiciona o frame na janela com um espaçamento vertical
+frame_resultados = tk.Frame(janela, bg="#f0f0f0") # Cria um frame para organizar os resultados 
+frame_resultados.pack(pady=10) # Posiciona o frame na janela com um espaçamento vertical
 
 # Label e resultado para o Seno
 label_seno = tk.Label(frame_resultados, text="Seno:", font=('Arial', 12), bg="#f0f0f0")
-label_seno.grid(row=0, column=0, padx=5, pady=5, sticky='e')  # Label para o seno, alinhado à direita
-resultado_seno = tk.Label(frame_resultados, text="", font=('Arial', 12, 'bold'), fg='red', bg="#f0f0f0")
-resultado_seno.grid(row=0, column=1, padx=10, pady=5, sticky='w')  # Label que exibe o resultado do seno, alinhado à esquerda
+label_seno.grid(row=0, column=0, padx=10, pady=5, sticky="e") # Label para o seno alinhado à direita
+resultado_seno = tk.Label(frame_resultados, text="", font=('Arial', 12, 'bold'), fg="red", bg="#f0f0f0")
+resultado_seno.grid(row=0, column=1, padx=10, pady=5, sticky="w") # Label que exibe o resultado do seno, alinhado à esquerda
 
 # Label e resultado para o Cosseno
 label_cosseno = tk.Label(frame_resultados, text="Cosseno:", font=('Arial', 12), bg="#f0f0f0")
-label_cosseno.grid(row=1, column=0, padx=5, pady=5, sticky='e')  # Label para o cosseno, alinhado à direita
-resultado_cosseno = tk.Label(frame_resultados, text="", font=('Arial', 12, 'bold'), fg='red', bg="#f0f0f0")
-resultado_cosseno.grid(row=1, column=1, padx=10, pady=5, sticky='w')  # Label que exibe o resultado do cosseno, alinhado à esquerda
+label_cosseno.grid(row=1, column=0, padx=10, pady=5, sticky="e") # Label para o cosseno, alinhado à direita
+resultado_cosseno = tk.Label(frame_resultados, text="", font=('Arial', 12, 'bold'),fg='red', bg="#f0f0f0")
+resultado_cosseno.grid(row=1, column=1, padx=10, pady=5, sticky="w") # Label que exibe o resultado do cosseno, alinhado à esquerda
 
 # Label e resultado para a Tangente
-label_tangente = tk.Label(frame_resultados, text="Tangente:", font=('Arial', 12), bg="#f0f0f0")
-label_tangente.grid(row=2, column=0, padx=5, pady=5, sticky='e')  # Label para a tangente, alinhado à direita
-resultado_tangente = tk.Label(frame_resultados, text="", font=('Arial', 12, 'bold'), fg='red', bg="#f0f0f0")
-resultado_tangente.grid(row=2, column=1, padx=10, pady=5, sticky='w')  # Label que exibe o resultado da tangente, alinhado à esquerda
+label_tangente = tk.Label (frame_resultados, text="Tangente:", font= ('Arial', 12), bg="#f0f0f0" )
+label_tangente.grid(row=2, column=0, padx=10, pady=5, sticky='e') # Label para a tangente alinhado à direita
+resultado_tangente = tk.Label(frame_resultados, text="", font=('Arial', 12,'bold'), fg='red', bg="#f0f0f0")
+resultado_tangente.grid (row=2, column=1, padx=10,pady=5, sticky='w') # Label que exibe o resultado da tangente, alinhado à esquerda
 
 # Iniciar a janela
-janela.mainloop()  # Inicia o loop principal
+janela.mainloop() # Inicia o loop principal da aplicação, mantendo a janela aberta
